@@ -1,22 +1,12 @@
-FROM ubuntu:18.04
-#
-# ENV DEBIAN_FRONTEND=noninteractive
-#
-# RUN apt update &&                 \
-# apt install -y                    \
-#   fonts-powerline                 \
-#   zsh                             \
-#   tmux                            \
-#   vim                             \
-#   emacs                           \
-#   htop                            \
-#   git                             \
-#   curl                            \
-#   wget                            \
-#   tree                            \
-#   ruby
-#
+# FROM ubuntu:18.04
+FROM debian
+
+ARG USERNAME=gdfoster
+ARG TTYPORT=8080
+
 ENV TERM xterm-256color
+
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 # Bootstrapping packages needed for installation
 RUN \
@@ -38,12 +28,13 @@ RUN localedef -i en_US -f UTF-8 en_US.UTF-8 && \
 # `security` is needed for fontconfig and fc-cache
 # Let the container know that there is no tty
 RUN DEBIAN_FRONTEND=noninteractive \
-  add-apt-repository ppa:aacebedo/fasd && \
+  # add-apt-repository ppa:aacebedo/fasd && \
   apt-get update && \
   apt-get -yqq install \
     autoconf \
     build-essential \
     curl \
+    tree \
     fasd \
     fontconfig \
     git \
@@ -56,23 +47,28 @@ RUN DEBIAN_FRONTEND=noninteractive \
     vim \
     emacs \
     wget \
+    procps \
     zsh && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN useradd -ms /bin/zsh gdfoster
+RUN wget https://golang.org/dl/go1.15.8.linux-amd64.tar.gz && \
+  tar -C /usr/local -xzf go1.15.8.linux-amd64.tar.gz && \
+  rm -f go1.15.8.linux-amd64.tar.gz
 
-USER gdfoster
+RUN useradd -ms /bin/zsh $USERNAME
 
-RUN  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
+USER $USERNAME
 
-ARG commit=f881a0bf6ceda11f8e85afce959621d2861ed476
+COPY config_setup.sh /home/$USERNAME
 
-RUN curl -o ${HOME}/config_setup.sh \
-  https://gist.githubusercontent.com/brona90/4e70d4cab20ebf910870f2b3242a25b6/raw/$commit/config_setup.sh && \
-  cd ${HOME} && bash config_setup.sh && \
-  zsh && \
-  nvm install --lts
+RUN cd ${HOME} && bash config_setup.sh
 
+ENV USERNAME ${USERNAME}
+ENV TTYPORT ${TTYPORT}
 
-CMD ["/bin/zsh"]
+EXPOSE ${TTYPORT}
+
+WORKDIR $HOME
+
+CMD /home/${USERNAME}/go/bin/gotty -w -p ${TTYPORT} zsh
