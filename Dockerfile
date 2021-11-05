@@ -32,6 +32,8 @@ RUN DEBIAN_FRONTEND=noninteractive \
   apt-get update && \
   apt-get -yqq install \
     autoconf \
+    make \
+    hugo \
     build-essential \
     curl \
     tree \
