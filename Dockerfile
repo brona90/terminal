@@ -1,6 +1,6 @@
 FROM debian:latest
 
-ARG USERNAME=gdfoster
+ARG USERNAME=gfoster
 
 ENV TERM xterm-256color
 
@@ -27,7 +27,7 @@ RUN DEBIAN_FRONTEND=noninteractive  \
   apt-get -yqq install              \
     autoconf                        \
     make                            \
-    hugo                            \
+    rlwrap                          \
     build-essential                 \
     curl                            \
     tree                            \
@@ -61,21 +61,26 @@ RUN curl -s https://api.github.com/repos/starship/starship/releases/latest \
   mv starship /usr/local/bin &&     \
   rm -rf starship*
 
-RUN useradd -ms /bin/zsh ${USERNAME}  && \
-      usermod -aG sudo ${USERNAME}    && \
+RUN mkdir /home/${USERNAME}
+
+COPY *.sh /home/${USERNAME}
+
+RUN /home/${USERNAME}/cheat.sh
+
+RUN useradd -ms /bin/zsh ${USERNAME}                  && \
+      usermod -aG sudo ${USERNAME}                    && \
+      chown ${USERNAME}:${USERNAME} /home/${USERNAME} && \
       echo "${USERNAME}:password" | chpasswd
 
 USER ${USERNAME}
 
 RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.10.0
 
-COPY *.sh /home/${USERNAME}
-
 COPY --chown=${USERNAME}:${USERNAME} .tool-versions /home/${USERNAME}
 
 RUN /home/${USERNAME}/asdf.sh
 
-RUN /home/${USERNAME}/config_setup.sh 
+RUN /home/${USERNAME}/config_setup.sh
 
 ENV USERNAME ${USERNAME}
 ENV TTYPORT ${TTYPORT}
