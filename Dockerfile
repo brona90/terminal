@@ -1,20 +1,18 @@
 FROM debian:latest
 
-ARG USERNAME=gfoster
-ARG TTYPORT=8080
-
 ENV TERM xterm-256color
 
+# only use bash for bootstrap
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 # Bootstrapping packages needed for installation
 RUN                                           \
   apt-get update &&                           \
-    apt-get install -yqq                      \
+  apt-get install -yqq                        \
         locales                               \
-            lsb-release                       \
-                software-properties-common && \
-                  apt-get clean
+        lsb-release                           \
+        software-properties-common &&         \
+  apt-get clean
 
 # Set locale to UTF-8
 ENV LANGUAGE en_US.UTF-8
@@ -47,29 +45,22 @@ RUN DEBIAN_FRONTEND=noninteractive  \
     gawk                            \
     autoconf                        \
     gettext                         \
-    libssl-dev                      \ 
+    libssl-dev                      \
     zlib1g-dev                      \
     zsh &&                          \
   apt-get clean &&                  \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# install starship
-RUN curl -s https://api.github.com/repos/starship/starship/releases/latest \
-  | grep browser_download_url       \
-  | grep x86_64-unknown-linux-gnu   \
-  | cut -d '"' -f 4                 \
-  | wget -qi - &&                   \
-  tar xvf starship-*.tar.gz &&      \
-  mv starship /usr/local/bin &&     \
-  rm -rf starship*
+ARG USERNAME=gfoster
+ARG TTYPORT=8080
 
 # add user and set password to password
 RUN useradd -ms /bin/zsh ${USERNAME}                  && \
       usermod -aG sudo ${USERNAME}                    && \
-      chown ${USERNAME}:${USERNAME} /home/${USERNAME} && \
+      chown -R ${USERNAME} /usr/local/bin             && \
       echo "${USERNAME}:password" | chpasswd
 
-# copy all shell scripts 
+# copy all shell scripts
 COPY *.sh /home/${USERNAME}
 
 # Install cheat.sh

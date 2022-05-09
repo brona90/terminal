@@ -10,7 +10,13 @@ do
     asdf plugin add $PLUGIN || break
 done
 
+# asdf install
+
 while read -r line
 do 
     asdf install $line || break 
-done < .tool-versions
+done < ${HOME}/.tool-versions
+
+asdf reshim
+
+ln -s $(which starship) /usr/local/bin/starship
