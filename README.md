@@ -71,5 +71,3 @@
 - installs browser based tty from <https://github.com/tsl0922/ttyd>
 
 ## The default CMD is to run gotty at ARG TTYPORT defaulting to 8080
-
-## The github action builds and pushes sucessful builds to dockerhub at brona90/terminal:<BUILD_TAG>
