@@ -85,13 +85,13 @@ RUN /home/${USERNAME}/yadr.sh
 # Install tmux config
 RUN /home/${USERNAME}/tmux.sh
 
-# Install gotty
-RUN /home/${USERNAME}/gotty.sh
+# Install ttyd
+RUN /home/${USERNAME}/ttyd.sh
 
 ENV USERNAME ${USERNAME}
 ENV TTYPORT ${TTYPORT}
 
 EXPOSE ${TTYPORT}
 
-CMD /home/${USERNAME}/.asdf/shims/gotty -w -p ${TTYPORT} tmux
+CMD /usr/local/bin/ttyd -p ${TTYPORT} tmux
 # CMD zsh

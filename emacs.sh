@@ -1,1 +1,1 @@
-emacs -nw -batch -u ${USER} -q -kill
+emacs -nw -batch -u ${USERNAME} -q -kill

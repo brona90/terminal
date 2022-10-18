@@ -66,9 +66,9 @@
 
 - installs ohmytmux and applieds config repo dot files
 
-### gotty.sh
+### ttyd.sh
 
-- installs browser based tty from <https://github.com/yudai/gotty>
+- installs browser based tty from <https://github.com/tsl0922/ttyd>
 
 ## The default CMD is to run gotty at ARG TTYPORT defaulting to 8080
 
