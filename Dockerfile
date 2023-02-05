@@ -93,5 +93,4 @@ ENV TTYPORT ${TTYPORT}
 
 EXPOSE ${TTYPORT}
 
-CMD /usr/local/bin/ttyd -p ${TTYPORT} tmux
-# CMD zsh
+CMD /usr/local/bin/ttyd -p ${TTYPORT} tmux new -As0

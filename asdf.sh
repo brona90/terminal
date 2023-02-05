@@ -1,4 +1,6 @@
-git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.10.0
+#!/usr/bin/env bash
+
+git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.10.2
 
 cd ${HOME}
 
@@ -13,8 +15,8 @@ done
 # asdf install
 
 while read -r line
-do 
-    asdf install $line || break 
+do
+    asdf install $line || break
 done < ${HOME}/.tool-versions
 
 asdf reshim
