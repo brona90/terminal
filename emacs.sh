@@ -1,1 +1,1 @@
-emacs -nw -batch -u ${USERNAME} -q -kill
+~/.config/emacs/bin/doom install -!
