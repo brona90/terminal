@@ -1,1 +1,1 @@
-~/.config/emacs/bin/doom install -!
+~/.config/emacs/bin/doom sync
