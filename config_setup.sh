@@ -1,5 +1,7 @@
 cd ${HOME}
 
+rm ${HOME}/.zshrc
+
 git clone --bare https://github.com/brona90/config.git ${HOME}/.cfg
 
 function config {

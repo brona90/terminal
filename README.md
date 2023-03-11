@@ -35,36 +35,44 @@
 
 ## Runs the scripts in the following order
 
+### btop.sh
+
+- installs `btop` from latest release in github <https://github.com/aristocratos/btop/releases/latest/download/btop-x86_64-linux-musl.tbz>
+  
 ### cheat.sh
 
-- installs cht.sh from <https://cht.sh> as root
+- installs `cht.sh` from <https://cht.sh> as root
 
 ### asdf.sh
 
-- installs asdf from <https://asdf-vm.com/>
-- adds all plugins listed in .tool-versions
-- installs all versions of plugins listed in .tool-versions
+- installs `asdf` from <https://asdf-vm.com/>
+- adds all plugins listed in `.tool-versions`
+- installs all versions of plugins listed in `.tool-versions`
 
-### config.sh
+### oh-my-zsh.sh
+
+- installs oh-my-zsh from <https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh>
+  - also installs plugins via git:
+    - zsh-history-substring-search
+    - fast-syntax-highlighting
+    - zsh-alias-finder
+    - asdf.plugin.zsh
+
+### config_setup.sh
 
 - pulls dot file style config from my config repo at <https://github.com/brona90/config>
 - creates config alias
 - pulls submodules
-  - yadr <https://github.com/skwp/dotfiles>
-  - spacemacs <https://github.com/syl20bnr/spacemacs>
   - ohmytmux <https://github.com/gpakosz/.tmux>
+  - doomemacs <https://github.com/doomemacs/doomemacs>
 
 ### emacs.sh
 
-- installs spacemacs and pulls dependencies from .spacemacs cloned above from config repo
-
-### yadr.sh
-
-- installs yadr for vim and zsh configurations and config repo dot files
+- installs doomemacs from it's bin cloned in submodule with `config_setup.sh`
 
 ### tmux.sh
 
-- installs ohmytmux and applieds config repo dot files
+- installs ohmytmux and applies config repo dot files
 
 ### ttyd.sh
 
