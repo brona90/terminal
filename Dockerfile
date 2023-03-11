@@ -82,9 +82,6 @@ RUN /home/${USERNAME}/oh-my-zsh.sh
 # Install config dot files
 RUN /home/${USERNAME}/config_setup.sh
 
-# Install spacevim
-RUN /home/${USERNAME}/vim.sh
-
 # Install doom emacs
 RUN /home/${USERNAME}/emacs.sh
 
