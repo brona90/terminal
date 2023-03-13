@@ -4,6 +4,7 @@
 
 ## This is a Dockerfile that bootstraps an Debian image via apt with
 
+- unzip
 - autoconf
 - make
 - rlwrap
