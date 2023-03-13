@@ -71,16 +71,14 @@ RUN /home/${USERNAME}/cheat.sh
 
 USER ${USERNAME}
 
-COPY --chown=${USERNAME}:${USERNAME} .tool-versions /home/${USERNAME}
-
-# Install asdf and tools from tool-versions
-RUN /home/${USERNAME}/asdf.sh
-
 # Install oh-my-zsh before adding config
 RUN /home/${USERNAME}/oh-my-zsh.sh
 
 # Install config dot files
 RUN /home/${USERNAME}/config_setup.sh
+
+# Install asdf and tools from tool-versions
+RUN /home/${USERNAME}/asdf.sh
 
 # Install doom emacs
 RUN /home/${USERNAME}/emacs.sh
