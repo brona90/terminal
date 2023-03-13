@@ -65,6 +65,7 @@
 - pulls submodules
   - ohmytmux <https://github.com/gpakosz/.tmux>
   - doomemacs <https://github.com/doomemacs/doomemacs>
+  - SpaceVim <https://github.com/SpaceVim/SpaceVim>
 
 ### emacs.sh
 
