@@ -129,14 +129,8 @@
           ];
           
           extraCommands = ''
-            # Create necessary directories
+            # Create directories
             mkdir -p tmp
-            mkdir -p home/${username}
-            
-            # Set up user
-            echo "${username}:x:1000:1000:${username}:/home/${username}:/bin/zsh" > etc/passwd
-            echo "${username}:x:1000:" > etc/group
-            echo "${username}:password" > etc/shadow
           '';
           
           config = {
@@ -154,12 +148,9 @@
               "TERM=xterm-256color"
               "LANGUAGE=en_US.UTF-8"
               "LANG=en_US.UTF-8"
-              "USERNAME=${username}"
               "TTYPORT=8080"
-              "PATH=/usr/bin:/bin"
             ];
-            User = username;
-            WorkingDir = "/home/${username}";
+            WorkingDir = "/";
           };
         };
         
