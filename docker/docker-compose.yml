@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  terminal:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.nix
+    image: terminal-nix:latest
+    container_name: terminal-nix
+    ports:
+      - "8080:8080"
+    environment:
+      - TERM=xterm-256color
+      - LANGUAGE=en_US.UTF-8
+      - LANG=en_US.UTF-8
+      - USERNAME=gfoster
+      - TTYPORT=8080
+    volumes:
+      # Mount workspace for persistent data
+      - terminal-data:/home/gfoster
+      # Optional: mount local config for development
+      # - ./config:/home/gfoster/.config
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+
+volumes:
+  terminal-data:
+    driver: local

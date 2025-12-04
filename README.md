@@ -1,83 +1,373 @@
-# terminal
+# Terminal Environment with Nix
 
-[![Publish Docker image](https://github.com/brona90/terminal/actions/workflows/docker-image.yml/badge.svg)](https://github.com/brona90/terminal/actions/workflows/docker-image.yml)
+A fully reproducible terminal environment using Nix, providing a consistent development setup across Docker containers and WSL.
 
-## This is a Dockerfile that bootstraps an Debian image via apt with
+## Features
 
-- unzip
-- autoconf
-- make
-- rlwrap
-- build-essential
-- curl
+- **Reproducible**: All dependencies pinned with Nix flakes
+- **Declarative**: Configuration as code
+- **Cross-platform**: Same config for Docker and WSL
+- **Fast**: Binary cache for quick builds
+- **Rollback**: Easy to revert changes
+
+## What's Included
+
+### Development Tools
+- GCC, Make, Autoconf, Binutils
+- Git with sensible defaults
+- Vim and Emacs 29
+
+### Programming Languages
+- Node.js 21
+- Python 3.10
+- Java 21 (OpenJDK)
+- Haskell (GHC)
+- Perl 5.38
+- Ruby 3.2
+- Common Lisp (SBCL)
+
+### Kubernetes Tools
+- Minikube
+- K9s
+
+### Terminal Environment
+- Zsh with Oh-My-Zsh
+- Tmux with custom configuration
+- Starship prompt
+- Syntax highlighting and autosuggestions
+
+### System Utilities
+- btop (system monitor)
+- htop
 - tree
 - fasd
-- fontconfig
-- git
-- sudo
-- tmux
-- vim
-- emacs
-- wget
-- procps
-- htop
-- dirmngr
-- gpg
-- gawk
-- autoconf
-- gettext
-- libssl-dev
-- zlib1g-dev
-- zsh
+- jq
+- ttyd (web-based terminal)
 
-## Creates a USER from ARG USERNAME defaulting to gdfoster (me)
+## Quick Start
 
-## COPYies all scripts ending in .sh to the image
+### Prerequisites
 
-## Runs the scripts in the following order
+Install Nix with flakes support:
 
-### btop.sh
+```bash
+# Install Nix
+curl -L https://nixos.org/nix/install | sh
 
-- installs `btop` from latest release in github <https://github.com/aristocratos/btop/releases/latest/download/btop-x86_64-linux-musl.tbz>
-  
-### cheat.sh
+# Enable flakes (add to ~/.config/nix/nix.conf or /etc/nix/nix.conf)
+experimental-features = nix-command flakes
+```
 
-- installs `cht.sh` from <https://cht.sh> as root
+### Option 1: Development Shell
 
-### asdf.sh
+Test the environment without installing:
 
-- installs `asdf` from <https://asdf-vm.com/>
-- adds all plugins listed in `.tool-versions`
-- installs all versions of plugins listed in `.tool-versions`
+```bash
+# Clone the repository
+git clone <your-repo-url>
+cd terminal-nix
 
-### oh-my-zsh.sh
+# Enter the development shell
+nix develop
 
-- installs oh-my-zsh from <https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh>
-  - also installs plugins via git:
-    - zsh-history-substring-search
-    - fast-syntax-highlighting
-    - zsh-alias-finder
-    - asdf.plugin.zsh
+# All tools are now available!
+starship --version
+node --version
+python --version
+```
 
-### config_setup.sh
+### Option 2: Docker Container
 
-- pulls dot file style config from my config repo at <https://github.com/brona90/config>
-- creates config alias
-- pulls submodules
-  - ohmytmux <https://github.com/gpakosz/.tmux>
-  - doomemacs <https://github.com/doomemacs/doomemacs>
-  - SpaceVim <https://github.com/SpaceVim/SpaceVim>
+Build and run as a Docker container:
 
-### emacs.sh
+```bash
+# Build the Docker image using Nix
+nix build .#docker
 
-- installs doomemacs from it's bin cloned in submodule with `config_setup.sh`
+# Load the image
+docker load < result
 
-### tmux.sh
+# Run the container
+docker run -it -p 8080:8080 terminal-nix:latest
 
-- installs ohmytmux and applies config repo dot files
+# Or use docker-compose
+cd docker
+docker-compose up -d
 
-### ttyd.sh
+# Access the web terminal at http://localhost:8080
+```
 
-- installs browser based tty from <https://github.com/tsl0922/ttyd>
+### Option 3: WSL Installation
 
-## The default CMD is to run gotty at ARG TTYPORT defaulting to 8080
+Install as a NixOS WSL distribution:
+
+#### Step 1: Install NixOS-WSL
+
+```powershell
+# Download NixOS-WSL tarball
+# Visit: https://github.com/nix-community/NixOS-WSL/releases
+
+# Import into WSL
+wsl --import NixOS $env:USERPROFILE\NixOS nixos-wsl.tar.gz --version 2
+
+# Start NixOS
+wsl -d NixOS
+```
+
+#### Step 2: Apply Configuration
+
+```bash
+# Inside WSL, clone this repository
+git clone <your-repo-url> ~/terminal-nix
+cd ~/terminal-nix
+
+# Build and switch to the configuration
+sudo nixos-rebuild switch --flake .#wsl
+
+# Restart WSL
+exit
+wsl -d NixOS
+```
+
+### Option 4: Home Manager (Standalone)
+
+Install just the user environment without NixOS:
+
+```bash
+# Clone the repository
+git clone <your-repo-url>
+cd terminal-nix
+
+# Build the home-manager configuration
+nix build .#homeConfig
+
+# Activate the configuration
+./result/activate
+```
+
+## Configuration
+
+### Customizing the Environment
+
+Edit `home.nix` to customize your environment:
+
+```nix
+# Add more packages
+home.packages = with pkgs; [
+  # Your additional packages here
+  ripgrep
+  fd
+  bat
+];
+
+# Modify shell aliases
+programs.zsh.shellAliases = {
+  # Your custom aliases
+  myalias = "echo 'Hello World'";
+};
+```
+
+### Updating Dependencies
+
+```bash
+# Update flake inputs
+nix flake update
+
+# Rebuild with new dependencies
+nix build .#docker
+# or
+sudo nixos-rebuild switch --flake .#wsl
+```
+
+### Adding New Tools
+
+1. Edit `flake.nix` to add the package to `commonPackages`
+2. Rebuild the configuration
+3. The tool is now available everywhere
+
+## Project Structure
+
+```
+terminal-nix/
+├── flake.nix              # Main flake definition
+├── flake.lock             # Locked dependencies
+├── home.nix               # Home-manager configuration
+├── docker/
+│   ├── Dockerfile.nix     # Nix-based Dockerfile
+│   └── docker-compose.yml # Docker Compose configuration
+├── wsl/
+│   └── configuration.nix  # NixOS WSL configuration
+└── README.md              # This file
+```
+
+## Common Tasks
+
+### Building the Docker Image
+
+```bash
+# Build with Nix
+nix build .#docker
+
+# Load into Docker
+docker load < result
+
+# Tag the image
+docker tag terminal-nix:latest your-registry/terminal-nix:latest
+
+# Push to registry
+docker push your-registry/terminal-nix:latest
+```
+
+### Testing Changes Locally
+
+```bash
+# Enter development shell
+nix develop
+
+# Test your changes
+# All packages and configurations are available
+
+# Exit when done
+exit
+```
+
+### Updating a Single Package
+
+```bash
+# Update a specific input
+nix flake lock --update-input nixpkgs
+
+# Rebuild
+nix build .#docker
+```
+
+### Garbage Collection
+
+```bash
+# Remove old generations
+nix-collect-garbage -d
+
+# Or keep last 30 days
+nix-collect-garbage --delete-older-than 30d
+```
+
+## Troubleshooting
+
+### Flakes Not Enabled
+
+If you get an error about experimental features:
+
+```bash
+# Add to ~/.config/nix/nix.conf
+mkdir -p ~/.config/nix
+echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+```
+
+### Docker Build Fails
+
+```bash
+# Clear Nix cache
+nix-collect-garbage -d
+
+# Rebuild
+nix build .#docker --rebuild
+```
+
+### WSL Configuration Issues
+
+```bash
+# Check system logs
+journalctl -xe
+
+# Rebuild with verbose output
+sudo nixos-rebuild switch --flake .#wsl --show-trace
+```
+
+### Package Not Found
+
+```bash
+# Search for packages
+nix search nixpkgs <package-name>
+
+# Check package availability
+nix-env -qaP | grep <package-name>
+```
+
+## Migration from Original Setup
+
+This Nix implementation replaces:
+
+- **apt packages** → Nix packages (pinned versions)
+- **asdf** → Nix (native version management)
+- **oh-my-zsh install script** → home-manager zsh module
+- **config bare repo** → home-manager dotfile management
+- **Individual .sh scripts** → Declarative Nix configuration
+
+### Benefits Over Original
+
+1. **Reproducibility**: Exact same environment every time
+2. **Speed**: Binary cache instead of compiling
+3. **Simplicity**: One configuration file instead of multiple scripts
+4. **Rollback**: Easy to revert to previous configurations
+5. **Cross-platform**: Same config for Docker and WSL
+
+## Advanced Usage
+
+### Creating a Custom Overlay
+
+```nix
+# In flake.nix, add an overlay
+overlays = [
+  (final: prev: {
+    myCustomPackage = prev.callPackage ./packages/my-package.nix {};
+  })
+];
+```
+
+### Using with direnv
+
+```bash
+# Create .envrc in your project
+echo "use flake" > .envrc
+direnv allow
+
+# Environment automatically loads when you cd into the directory
+```
+
+### Sharing Configurations
+
+```bash
+# Export your configuration
+nix flake show
+
+# Others can use it directly
+nix develop github:yourusername/terminal-nix
+```
+
+## Contributing
+
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test with `nix flake check`
+5. Submit a pull request
+
+## Resources
+
+- [Nix Manual](https://nixos.org/manual/nix/stable/)
+- [Home Manager Manual](https://nix-community.github.io/home-manager/)
+- [NixOS WSL](https://github.com/nix-community/NixOS-WSL)
+- [Nix Pills](https://nixos.org/guides/nix-pills/)
+
+## License
+
+MIT License - See LICENSE file for details
+
+## Support
+
+For issues and questions:
+- Open an issue on GitHub
+- Check the [Nix Discourse](https://discourse.nixos.org/)
+- Join the [NixOS Matrix channel](https://matrix.to/#/#nixos:nixos.org)
