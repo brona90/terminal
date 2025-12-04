@@ -36,7 +36,6 @@
     
     # File utilities
     tree
-    fasd
     unzip
     
     # Network tools
@@ -72,7 +71,6 @@
     # Additional utilities
     gawk
     gnupg
-    dirmngr
   ];
 
   # Git configuration
