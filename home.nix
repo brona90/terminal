@@ -24,7 +24,7 @@
     
     # Editors
     vim
-    emacs29
+    emacs
     
     # Terminal multiplexer
     tmux
@@ -47,12 +47,12 @@
     starship
     
     # Programming languages and tools
-    nodejs_21
-    python310
-    jdk21
+    nodejs
+    python3
+    openjdk
     ghc
-    perl538
-    ruby_3_2
+    perl
+    ruby
     jq
     sbcl
     
